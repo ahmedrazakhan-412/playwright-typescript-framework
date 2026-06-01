@@ -20,7 +20,8 @@ test("Playwright Locators", async ({ page }) => {
 
     await expect(page).toHaveTitle("nopCommerce demo store. Home page title");
     /*Locate by alt text
-    All images should have an alt attribute that describes the image. You can locate an image based on the text alternative using page.getByAltText().
+    All images should have an alt attribute that describes the image. 
+    You can locate an image based on the text alternative using page.getByAltText().
     */
     const logo: Locator = page.getByAltText("nopCommerce demo store");
     await expect(logo).toBeVisible();
