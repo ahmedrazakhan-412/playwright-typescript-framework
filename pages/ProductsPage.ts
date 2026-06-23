@@ -1,22 +1,25 @@
-import { Page } from '@playwright/test';
+import { Locator, Page } from '@playwright/test';
 
 export class ProductsPage {
+  readonly addToCartButtons: Locator;
+  readonly cartBadge: Locator;
+  readonly cartIcon: Locator;
+  readonly cartItems: Locator;
 
-constructor(private page: Page) {}
+  constructor(private page: Page) {
+    this.addToCartButtons = page.getByRole('button', { name: 'Add to cart' });
+    this.cartBadge = page.locator('.shopping_cart_badge');
+    this.cartIcon = page.locator('.shopping_cart_link');
+    this.cartItems = page.locator('.cart_item');
+  }
 
-cartBadge = '.shopping_cart_badge';
-cartIcon = '.shopping_cart_link';
-
-async addFirstNProducts(count: number) {
-    const products = this.page.locator("button:text('Add to cart')");
-
+  async addFirstNProducts(count: number) {
     for (let i = 0; i < count; i++) {
-        await products.nth(i).click();
+      await this.addToCartButtons.nth(i).click();
     }
-}
+  }
 
-async openCart() {
-    await this.page.click(this.cartIcon);
-}
-
+  async openCart() {
+    await this.cartIcon.click();
+  }
 }
