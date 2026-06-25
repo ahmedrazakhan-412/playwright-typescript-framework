@@ -1,19 +1,16 @@
 import { test, expect } from '@playwright/test';
-import { BrowserUtils } from '../utils/BrowserUtils';
-import { DashboardPage } from '../pages/DashboardPage';
-import { NewTabPage } from '../pages/NewTabPage';
-import { WindowPage } from '../pages/WindowPage';
-import { MessageWindowPage } from '../pages/MessageWindowPage';
 
 test.describe('Browser windows combined tests', () => {
   test('Click on new tab and see heading in new tab', async ({ page }) => {
-    await BrowserUtils.navigate(page, 'https://demoqa.com/browser-windows');
+    await page.goto('https://demoqa.com/browser-windows');
 
-    const dashboardPage = new DashboardPage(page);
-    const newTab = await dashboardPage.openNewTab();
+    const [newTab] = await Promise.all([
+      page.context().waitForEvent('page'),
+      page.locator('#tabButton').click(),
+    ]);
 
-    const newTabPage = new NewTabPage(newTab);
-    const headingText = (await newTabPage.getHeading()) ?? '';
+    await newTab.waitForLoadState();
+    const headingText = (await newTab.locator('#sampleHeading').textContent()) ?? '';
 
     console.log(`New tab heading: ${headingText}`);
     expect(headingText.toLowerCase()).toContain('sample page');
@@ -23,13 +20,15 @@ test.describe('Browser windows combined tests', () => {
   });
 
   test('Open new window and read heading', async ({ page }) => {
-    await BrowserUtils.navigate(page, 'https://demoqa.com/browser-windows');
+    await page.goto('https://demoqa.com/browser-windows');
 
-    const dashboard = new DashboardPage(page);
-    const newWindow = await dashboard.openNewWindow();
+    const [newWindow] = await Promise.all([
+      page.context().waitForEvent('page'),
+      page.locator('#windowButton').click(),
+    ]);
 
-    const windowPage = new WindowPage(newWindow);
-    const heading = (await windowPage.getHeading()) ?? '';
+    await newWindow.waitForLoadState();
+    const heading = (await newWindow.locator('#sampleHeading').textContent()) ?? '';
 
     console.log(`Window heading: ${heading}`);
     expect(heading.toLowerCase()).toContain('sample page');
@@ -39,13 +38,15 @@ test.describe('Browser windows combined tests', () => {
   });
 
   test('Open message window and read message', async ({ page }) => {
-    await BrowserUtils.navigate(page, 'https://demoqa.com/browser-windows');
+    await page.goto('https://demoqa.com/browser-windows');
 
-    const dashboard = new DashboardPage(page);
-    const messageWindow = await dashboard.openMessageWindow();
+    const [messageWindow] = await Promise.all([
+      page.context().waitForEvent('page'),
+      page.locator('#messageWindowButton').click(),
+    ]);
 
-    const messagePage = new MessageWindowPage(messageWindow);
-    const message = await messagePage.getMessage();
+    await messageWindow.waitForLoadState();
+    const message = (await messageWindow.locator('body').textContent())?.trim() ?? '';
 
     console.log(`Message window text: ${message}`);
     expect(message.length).toBeGreaterThan(0);
