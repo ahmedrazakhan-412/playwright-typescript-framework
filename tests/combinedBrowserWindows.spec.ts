@@ -55,3 +55,22 @@ test.describe('Browser windows combined tests', () => {
     await page.bringToFront();
   });
 });
+
+/* | Scenario          | Playwright Method                                     |
+| ----------------- | ----------------------------------------------------- |
+| Single iframe     | `frameLocator()`                                      |
+| Nested iframe     | Chain `frameLocator()`                                |
+| New browser tab   | `context.waitForEvent('page')`                        |
+| Popup window      | `page.waitForEvent('popup')`                          |
+| Switch to new tab | Store the returned `Page` object and interact with it |
+| Frame by name/URL | `page.frame()`                                        |
+
+"To handle iframes in Playwright, 
+I generally use frameLocator() because it automatically waits for the frame and allows direct interaction with elements inside it. 
+For nested iframes, I chain multiple frameLocator() calls. 
+When an action opens a new browser tab, I use context.waitForEvent('page') 
+to capture the new Page object and interact with it. 
+For popup windows opened by the current page, such as OAuth login windows, 
+I use page.waitForEvent('popup'). These approaches make handling frames, tabs, 
+and popups reliable and easy to maintain."
+*/
